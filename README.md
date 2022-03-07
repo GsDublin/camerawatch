@@ -10,7 +10,7 @@ The mp4 observer creates after 10 sec a short 1FPS gif animation.
 
 ## FHEM
 Integration needs a dummy named like this:
-defmod Kamera_Upload dummy
+```defmod Kamera_Upload dummy```
 
 
 Debug output:
