@@ -6,16 +6,6 @@ The observer recognizes new files with inotify and starts an separate process fo
 Reolink cameras are uploading pictures and videos in "packages".
 Upload is finished or finally interrupted if there is no sizeable change for a given time.
 
-## ffmpeg
-The mp4 observer creates after 10 sec a short 1FPS gif animation.
-
-## FHEM
-Integration needs a dummy named like this:
-```
-defmod Kamera_Upload dummy
-```
-
-
 Debug output:
 ```
 echo "P $ctime $file $j: $oldsize $actsize ${speed}b/s"
@@ -38,4 +28,52 @@ V 20 K3TA_00_20220307125142.mp4 0: 39742135 41332655 795260b/srate=   0.0kbits/s
 P 12 K3TA_00_20220307125217.jpg 2: 1287411 1287411 0b/s.88 bitrate=   0.0kbits/s speed=0.486x
 V 22 K3TA_00_20220307125142.mp4 0: 41332655 42923191 795268b/strate=  37.5kbits/s speed=0.643x
 V 24 K3TA_00_20220307125142.mp4 0: 42923191 44512642 794725b/strate=  36.2kbits/s speed=0.65x
+```
+
+## ffmpeg
+The mp4 observer creates after 10 sec a short 1FPS gif animation.
+
+## FHEM
+Integration needs a dummy named like this:
+```
+defmod Kamera_Upload dummy
+```
+
+ 	
+```
+Kamera_Upload:.*Video_Datei.* {
+    my $index = rindex($EVTPART1, '/') + 1;
+    my $width = rindex($EVTPART1, '.') - $index;
+    my $filename = substr($EVTPART1, $index, $width);
+
+    my ($sec,$min,$hour,$mday,$month,$year,$wday,$yday,$isdst) = localtime(gettimeofday());
+    my $dmyhms = sprintf("%02d.%02d.%04d %02d:%02d:%02d", $mday, $month+1, 1900+$year, $hour, $min, $sec);
+
+    ## GetFullVideoFile
+    fhem("set myTelegramBot _msg @#[TELEGRAM_GROUP_NAME] #Videodatei $dmyhms \nDatei:\n\/GFVF_$filename");
+}
+```
+
+```
+Kamera_Upload {
+my $eventidx = index($EVENT, ":");
+my $eventname = substr($EVENT, 0, $eventidx);
+
+my @y = grep {$_} split /(\_+)/, $EVENT;
+my $camname = $y[0];
+my $cam_str = substr $y[0], 1, 2;
+my $cam_num = sprintf("%d", $cam_str);
+
+  if ( $eventname eq "${camname}_Bild_Name" ) {
+      my $filename = ReadingsVal($NAME,"last","-");
+      my $path = AttrVal($NAME,"storage","-");
+      my $msgChatId = "[TELEGRAM_GROUP_NAME]";
+
+      fhem("set myTelegramBot _msg @#[TELEGRAM_GROUP_NAME] #${camname}_Alarm $EVTPART1");
+      if ($msgChatId ne "") {
+          fhem("setreading Kamera${cam_num}_Small_Telegram msgChatId $msgChatId");
+      }
+      fhem("get Kamera${cam_num}_Small_Telegram image");
+  }
+}
 ```
