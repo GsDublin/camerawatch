@@ -8,13 +8,13 @@ Upload is finished or finally interrupted if there is no sizeable change for a g
 
 The mp4 observer creates after 10 sec a short 1FPS gif animation.
 
-# FHEM
+## FHEM
 Integration needs a dummy named like this:
 defmod Kamera_Upload dummy
 
 
 Debug output:
-
+```
 Picture or Video-Upload
 | Upload duration / sec
 | |  Filename
@@ -30,3 +30,4 @@ V 20 K3TA_00_20220307125142.mp4 0: 39742135 41332655 795260b/srate=   0.0kbits/s
 P 12 K3TA_00_20220307125217.jpg 2: 1287411 1287411 0b/s.88 bitrate=   0.0kbits/s speed=0.486x
 V 22 K3TA_00_20220307125142.mp4 0: 41332655 42923191 795268b/strate=  37.5kbits/s speed=0.643x
 V 24 K3TA_00_20220307125142.mp4 0: 42923191 44512642 794725b/strate=  36.2kbits/s speed=0.65x
+```
