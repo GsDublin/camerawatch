@@ -6,19 +6,27 @@ The observer recognizes new files with inotify and starts an separate process fo
 Reolink cameras are uploading pictures and videos in "packages".
 Upload is finished or finally interrupted if there is no sizeable change for a given time.
 
+## ffmpeg
 The mp4 observer creates after 10 sec a short 1FPS gif animation.
 
 ## FHEM
 Integration needs a dummy named like this:
-```defmod Kamera_Upload dummy```
+```
+defmod Kamera_Upload dummy
+```
 
 
 Debug output:
 ```
+echo "P $ctime $file $j: $oldsize $actsize ${speed}b/s"
+
 Picture or Video-Upload
 | Upload duration / sec
 | |  Filename
-| |  |
+| |  |                             Old-Size
+| |  |                             |        New-Size
+| |  |                             |        |        Speed
+| |  |                             |        |        |
 V 12 K3TA_00_20220307125142.mp4 0: 12717752 34972542 11127395b/s
 P 3 K3TA_00_20220307125217.jpg 0: 1012224 1287411 91729b/s bitrate=  43.1kbits/s speed=0.631x
 V 14 K3TA_00_20220307125142.mp4 0: 34972542 36563013 795235b/srate=  42.0kbits/s speed=0.636x
